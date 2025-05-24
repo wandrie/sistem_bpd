@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Peraturan Desa{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Peraturan Desa</h2>
+    {% if session.user_role == 'admin' %}
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahPeraturanModal">
+        <i class="bi bi-plus-circle"></i> Tambah Peraturan
+    </button>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nomor</th>
+                        <th>Judul</th>
+                        <th>Tanggal</th>
+                        <th>File</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in peraturan %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ p.nomor }}</td>
+                        <td>{{ p.judul }}</td>
+                        <td>{{ p.tanggal.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if p.file_peraturan %}
+                            <a href="{{ url_for('download_file', filename=p.file_peraturan) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% else %}
+                            <span class="text-muted">Tidak ada</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if session.user_role == 'admin' %}
+                            <a href="{{ url_for('hapus_peraturan', id=p.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Tambah Peraturan -->
+<div class="modal fade" id="tambahPeraturanModal" tabindex="-1" aria-labelledby="tambahPeraturanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tambahPeraturanModalLabel">Tambah Peraturan Desa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('tambah_peraturan') }}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nomor" class="form-label">Nomor Peraturan</label>
+                        <input type="text" class="form-control" id="nomor" name="nomor" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="judul" class="form-label">Judul Peraturan</label>
+                        <input type="text" class="form-control" id="judul" name="judul" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tanggal" class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" id="tanggal" name="tanggal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <textarea class="form-control" id="keterangan" name="keterangan" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file_peraturan" class="form-label">File Peraturan</label>
+                        <input type="file" class="form-control" id="file_peraturan" name="file_peraturan" accept=".pdf,.doc,.docx">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    // Jika ada error saat submit form, tampilkan modal kembali
+    {% if request.method == 'POST' and request.path == url_for('peraturan') %}
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = new bootstrap.Modal(document.getElementById('tambahPeraturanModal'));
+        modal.show();
+    });
+    {% endif %}
+</script>
+{% endblock %}

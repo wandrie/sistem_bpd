@@ -1,0 +1,38 @@
+<header class="header sticky-top py-6 bg-white shadow-sm">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-link me-3 d-md-none" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <h2 class="mb-0">Sistem Informasi Manajemen BPD Paokmotong</h3>
+        </div>
+        
+        {% if current_user.is_authenticated %}
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown">
+                {% if current_user.foto_profil %}
+                <img src="{{ url_for('static', filename='uploads/profil/' + current_user.foto_profil) }}" 
+                     alt="Profile" 
+                     width="32" 
+                     height="32" 
+                     class="rounded-circle me-2 object-fit-cover">
+                {% else %}
+                <img src="{{ url_for('static', filename='img/default-profile.png') }}" 
+                     alt="Profile" 
+                     width="32" 
+                     height="32" 
+                     class="rounded-circle me-2">
+                {% endif %}
+                <span>{{ current_user.nama }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{{ url_for('profile') }}">Profil</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-outline-primary">Login</a>
+        {% endif %}
+    </div>
+</header>

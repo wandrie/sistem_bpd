@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'tambah' %}Tambah{% else %}Edit{% endif %} Anggota BPD{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold">{% if mode == 'tambah' %}Tambah{% else %}Edit{% endif %} Anggota BPD</h2>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label for="nama" class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" id="nama" name="nama" 
+                               value="{{ anggota.nama if anggota else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="jabatan" class="form-label">Jabatan</label>
+                        <input type="text" class="form-control" id="jabatan" name="jabatan" 
+                               value="{{ anggota.jabatan if anggota else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="alamat" class="form-label">Alamat</label>
+                        <textarea class="form-control" id="alamat" name="alamat" rows="2">{{ anggota.alamat if anggota else '' }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="telepon" class="form-label">Telepon</label>
+                                <input type="text" class="form-control" id="telepon" name="telepon" 
+                                       value="{{ anggota.telepon if anggota else '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ anggota.email if anggota else '' }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3 text-center">
+                        {% if mode == 'edit' and anggota.foto %}
+                        <img id="fotoPreview" src="{{ url_for('static', filename='uploads/' + anggota.foto) }}" 
+                             alt="Foto Profil" class="img-thumbnail mb-2" style="max-width: 200px;">
+                        {% else %}
+                        <img id="fotoPreview" src="{{ url_for('static', filename='img/default-profile.png') }}" 
+                             alt="Foto Profil" class="img-thumbnail mb-2" style="max-width: 200px; display: none;">
+                        {% endif %}
+                        
+                        <div class="input-group">
+                            <input type="file" class="form-control file-input" id="foto" name="foto" 
+                                   accept="image/*" data-preview="fotoPreview">
+                        </div>
+                        <small class="text-muted">Upload foto profil (max 2MB)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <a href="{{ url_for('anggota') }}" class="btn btn-secondary me-2">Batal</a>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

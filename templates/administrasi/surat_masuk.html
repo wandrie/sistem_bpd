@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Surat Masuk{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Surat Masuk</h2>
+    {% if session.user_role == 'admin' %}
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahSuratModal">
+        <i class="bi bi-plus-circle"></i> Tambah Surat
+    </button>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nomor</th>
+                        <th>Tanggal</th>
+                        <th>Pengirim</th>
+                        <th>Perihal</th>
+                        <th>File</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in surat %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ s.nomor_surat }}</td>
+                        <td>{{ s.tanggal_surat.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ s.pengirim }}</td>
+                        <td>{{ s.perihal }}</td>
+                        <td>
+                            {% if s.file_surat %}
+                            <a href="{{ url_for('download_file', filename=s.file_surat) }}" class="btn btn-sm btn-info">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% else %}
+                            <span class="text-muted">Tidak ada</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if session.user_role == 'admin' %}
+                            <a href="{{ url_for('hapus_surat_masuk', id=s.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Tambah Surat -->
+<div class="modal fade" id="tambahSuratModal" tabindex="-1" aria-labelledby="tambahSuratModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tambahSuratModalLabel">Tambah Surat Masuk</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('tambah_surat_masuk') }}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="nomor_surat" class="form-label">Nomor Surat</label>
+                        <input type="text" class="form-control" id="nomor_surat" name="nomor_surat" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tanggal_surat" class="form-label">Tanggal Surat</label>
+                        <input type="date" class="form-control" id="tanggal_surat" name="tanggal_surat" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pengirim" class="form-label">Pengirim</label>
+                        <input type="text" class="form-control" id="pengirim" name="pengirim" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="perihal" class="form-label">Perihal</label>
+                        <input type="text" class="form-control" id="perihal" name="perihal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <textarea class="form-control" id="keterangan" name="keterangan" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file_surat" class="form-label">File Surat</label>
+                        <input type="file" class="form-control" id="file_surat" name="file_surat" accept=".pdf,.doc,.docx">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    // Jika ada error saat submit form, tampilkan modal kembali
+    {% if request.method == 'POST' and request.path == url_for('surat_masuk') %}
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = new bootstrap.Modal(document.getElementById('tambahSuratModal'));
+        modal.show();
+    });
+    {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Kelola Struktur Organisasi{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Kelola Struktur Organisasi</h2>
+        <a href="{{ url_for('struktur_organisasi') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-eye me-2"></i>Lihat Struktur
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Tambah Anggota Struktur</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Jabatan</label>
+                        <input type="text" name="jabatan" class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Nama Pejabat</label>
+                        <input type="text" name="nama_pejabat" class="form-control" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label">Urutan</label>
+                        <input type="number" name="urutan" class="form-control" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label">Foto</label>
+                        <input type="file" name="foto" class="form-control" accept="image/*">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Daftar Struktur Organisasi</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Jabatan</th>
+                            <th>Nama Pejabat</th>
+                            <th>Foto</th>
+                            <th>Urutan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in struktur %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ item.jabatan }}</td>
+                            <td>{{ item.nama_pejabat }}</td>
+                            <td>
+                                {% if item.foto %}
+                                <img src="{{ url_for('static', filename='uploads/struktur/' + item.foto) }}" 
+                                     width="50" height="50" class="rounded-circle">
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.urutan }}</td>
+                            <td>
+                                <a href="{{ url_for('hapus_struktur', id=item.id) }}" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Yakin ingin menghapus?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

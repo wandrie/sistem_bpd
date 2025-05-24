@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold">Dashboard</h2>
+    <p class="text-muted">Selamat datang di sistem informasi BPD Paokmotong, {{ current_user.nama }}!</p>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted">Anggota BPD</h6>
+                        <h3 class="fw-bold">{{ total_anggota }}</h3>
+                    </div>
+                    <div class="stat-icon bg-primary">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted">Kegiatan</h6>
+                        <h3 class="fw-bold">{{ total_kegiatan }}</h3>
+                    </div>
+                    <div class="stat-icon bg-success">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted">Surat Masuk</h6>
+                        <h3 class="fw-bold">{{ total_surat_masuk }}</h3>
+                    </div>
+                    <div class="stat-icon bg-info">
+                        <i class="bi bi-envelope-arrow-down"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted">Surat Keluar</h6>
+                        <h3 class="fw-bold">{{ total_surat_keluar }}</h3>
+                    </div>
+                    <div class="stat-icon bg-warning">
+                        <i class="bi bi-envelope-arrow-up"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Kegiatan Terbaru</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Jenis</th>
+                                <th>Judul</th>
+                                <th>Tempat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for kegiatan in kegiatan_terbaru %}
+                            <tr>
+                                <td>{{ kegiatan.tanggal.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ kegiatan.jenis }}</td>
+                                <td>{{ kegiatan.judul }}</td>
+                                <td>{{ kegiatan.tempat }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Aktivitas Terkini</h5>
+            </div>
+            <div class="card-body">
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon bg-primary">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>Anggota baru ditambahkan</p>
+                            <small class="text-muted">2 jam yang lalu</small>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon bg-success">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>Laporan keuangan diupload</p>
+                            <small class="text-muted">Kemarin</small>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon bg-info">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>Surat masuk baru</p>
+                            <small class="text-muted">2 hari yang lalu</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

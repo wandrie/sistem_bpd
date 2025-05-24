@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Struktur Organisasi BPD{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Struktur Organisasi BPD</h2>
+        {% if current_user.role == 'admin' %}
+        <a href="{{ url_for('admin_struktur_organisasi') }}" class="btn btn-primary">
+            <i class="bi bi-pencil-square me-2"></i>Kelola Struktur
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="row justify-content-center">
+        {% for item in struktur %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    {% if item.foto %}
+                    <img src="{{ url_for('static', filename='uploads/struktur/' + item.foto) }}" 
+                         class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover;">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='img/default-profile.png') }}" 
+                         class="rounded-circle mb-3" width="120" height="120">
+                    {% endif %}
+                    <h5 class="card-title">{{ item.jabatan }}</h5>
+                    <p class="card-text">{{ item.nama_pejabat }}</p>
+                </div>
+            </div>
+        </div>
+        
+        {% if loop.index % 4 == 0 %}
+        </div><div class="row justify-content-center">
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Buku Besar Keuangan BPD</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Total Penerimaan</h5>
+                    <h3>Rp {{ "{:,.2f}".format(total_penerimaan) }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5>Total Pengeluaran</h5>
+                    <h3>Rp {{ "{:,.2f}".format(total_pengeluaran) }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#transaksiModal" id="tambahTransaksiBtn">
+            <i class="bi bi-plus-circle"></i> Tambah Transaksi
+        </button>
+    </div>
+    
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Daftar Transaksi</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>No. Bukti</th>
+                            <th>Keterangan</th>
+                            <th class="text-end">Penerimaan (Rp)</th>
+                            <th class="text-end">Pengeluaran (Rp)</th>
+                            <th class="text-end">Saldo (Rp)</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="text-end fw-bold">Saldo Awal</td>
+                            <td class="text-end fw-bold">{{ "{:,.2f}".format(saldo_awal) }}</td>
+                            <td></td>
+                        </tr>
+                        
+                        {% for t in transaksi %}
+                        <tr>
+                            <td>{{ t.tanggal|format_date }}</td>
+                            <td>{{ t.referensi }}</td>
+                            <td>{{ t.keterangan }}</td>
+                            <td class="text-end {% if t.jenis == 'penerimaan' %}text-success fw-bold{% endif %}">
+                                {% if t.jenis == 'penerimaan' %}{{ "{:,.2f}".format(t.jumlah) }}{% endif %}
+                            </td>
+                            <td class="text-end {% if t.jenis == 'pengeluaran' %}text-danger fw-bold{% endif %}">
+                                {% if t.jenis == 'pengeluaran' %}{{ "{:,.2f}".format(t.jumlah) }}{% endif %}
+                            </td>
+                            <td class="text-end">{{ "{:,.2f}".format(t.saldo_berjalan) }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-warning edit-transaksi-btn" 
+                                            data-bs-toggle="modal" data-bs-target="#transaksiModal"
+                                            data-id="{{ t.id }}"
+                                            data-tanggal="{{ t.tanggal.strftime('%Y-%m-%d') }}" {# Format tanggal untuk input type="date" #}
+                                            data-referensi="{{ t.referensi }}"
+                                            data-keterangan="{{ t.keterangan }}"
+                                            data-jenis="{{ t.jenis }}"
+                                            data-jumlah="{{ t.jumlah }}"
+                                            data-file-laporan="{{ t.file_laporan or '' }}" {# Tambahkan file_laporan #}
+                                            >
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <form method="POST" action="{{ url_for('hapus_keuangan', id=t.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger" 
+                                                onclick="return confirm('Yakin ingin menghapus transaksi ini?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                    {% if t.file_laporan %}
+                                    <a href="{{ url_for('download_file', jenis='keuangan', filename=t.file_laporan) }}" 
+                                       class="btn btn-sm btn-primary" target="_blank">
+                                        <i class="bi bi-download"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="transaksiModal" tabindex="-1" aria-labelledby="transaksiModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transaksiModalLabel">Tambah Transaksi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="transaksiForm" method="POST" enctype="multipart/form-data"> {# Hapus action statis di sini #}
+                <input type="hidden" id="transaksi_id" name="id"> {# Ganti name menjadi 'id' agar sesuai dengan edit_keuangan #}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tanggal" class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" id="tanggal" name="tanggal" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="referensi" class="form-label">No. Bukti</label>
+                        <input type="text" class="form-control" id="referensi" name="referensi">
+                    </div>
+                    <div class="mb-3">
+                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <input type="text" class="form-control" id="keterangan" name="keterangan" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="jenis" class="form-label">Jenis Transaksi</label>
+                        <select class="form-select" id="jenis" name="jenis" required>
+                            <option value="">Pilih Jenis</option>
+                            <option value="penerimaan">Penerimaan</option>
+                            <option value="pengeluaran">Pengeluaran</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="jumlah" class="form-label">Jumlah (Rp)</label>
+                        <input type="number" class="form-control" id="jumlah" name="jumlah" min="0" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file_laporan" class="form-label">File Laporan (Opsional)</label>
+                        <input type="file" class="form-control" id="file_laporan" name="bukti"> {# Ganti name menjadi 'bukti' agar sesuai dengan app.py #}
+                        <small class="text-muted" id="currentFileDisplay"></small> {# Untuk menampilkan file saat ini #}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const transaksiModal = document.getElementById('transaksiModal');
+        const transaksiForm = document.getElementById('transaksiForm');
+        const modalTitle = document.getElementById('transaksiModalLabel');
+        const transaksiIdInput = document.getElementById('transaksi_id');
+        const tanggalInput = document.getElementById('tanggal');
+        const referensiInput = document.getElementById('referensi');
+        const keteranganInput = document.getElementById('keterangan');
+        const jenisSelect = document.getElementById('jenis');
+        const jumlahInput = document.getElementById('jumlah');
+        const fileLaporanInput = document.getElementById('file_laporan'); // Input file
+        const currentFileDisplay = document.getElementById('currentFileDisplay'); // Untuk menampilkan file saat ini
+
+        // Event listener untuk tombol "Tambah Transaksi"
+        document.getElementById('tambahTransaksiBtn').addEventListener('click', function() {
+            modalTitle.textContent = 'Tambah Transaksi';
+            transaksiForm.action = "{{ url_for('tambah_transaksi') }}";
+            transaksiIdInput.value = ''; // Kosongkan ID
+            transaksiForm.reset(); // Reset form
+            currentFileDisplay.innerHTML = ''; // Kosongkan info file
+            fileLaporanInput.value = ''; // Pastikan input file juga kosong
+        });
+
+        // Event listener untuk tombol "Edit" di setiap baris tabel
+        document.querySelectorAll('.edit-transaksi-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const tanggal = this.dataset.tanggal;
+                const referensi = this.dataset.referensi;
+                const keterangan = this.dataset.keterangan;
+                const jenis = this.dataset.jenis;
+                const jumlah = this.dataset.jumlah;
+                const fileLaporan = this.dataset.fileLaporan; // Ambil nama file dari data-attribute
+
+                modalTitle.textContent = 'Edit Transaksi';
+                // Set action form ke rute edit_keuangan dengan ID yang benar
+                transaksiForm.action = "{{ url_for('edit_keuangan', id=0) }}".replace('0', id);
+                
+                transaksiIdInput.value = id;
+                tanggalInput.value = tanggal; // Tanggal sudah diformat YYYY-MM-DD dari Jinja
+                referensiInput.value = referensi;
+                keteranganInput.value = keterangan;
+                jenisSelect.value = jenis;
+                jumlahInput.value = jumlah;
+
+                // Tampilkan link ke file laporan saat ini jika ada
+                if (fileLaporan) {
+                    currentFileDisplay.innerHTML = `File saat ini: <a href="{{ url_for('download_file', jenis='keuangan', filename='') }}${fileLaporan}" target="_blank">Lihat File</a>`;
+                } else {
+                    currentFileDisplay.innerHTML = '';
+                }
+                fileLaporanInput.value = ''; // Kosongkan input file agar user bisa memilih file baru
+
+                // Tampilkan modal
+                const modal = new bootstrap.Modal(transaksiModal);
+                modal.show();
+            });
+        });
+
+        // Pastikan form direset saat modal ditutup jika tidak ada aksi edit yang dipicu
+        transaksiModal.addEventListener('hidden.bs.modal', function () {
+            // Jika form action masih mengarah ke edit, reset ke tambah setelah modal ditutup
+            // Ini penting jika user membuka modal edit tapi tidak menyimpan perubahan
+            if (transaksiForm.action.includes("{{ url_for('edit_keuangan', id=0).replace('0','') }}")) {
+                transaksiForm.action = "{{ url_for('tambah_transaksi') }}";
+                transaksiForm.reset();
+                transaksiIdInput.value = '';
+                modalTitle.textContent = 'Tambah Transaksi';
+                currentFileDisplay.innerHTML = '';
+                fileLaporanInput.value = '';
+            }
+        });
+    });
+</script>
+{% endblock %}

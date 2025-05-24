@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}{% if mode == 'tambah' %}Tambah{% else %}Edit{% endif %} Kegiatan BPD{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="fw-bold">{% if mode == 'tambah' %}Tambah{% else %}Edit{% endif %} Kegiatan BPD</h2>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="jenis" class="form-label">Jenis Kegiatan</label>
+                        <select class="form-select" id="jenis" name="jenis" required>
+                            <option value="">Pilih Jenis</option>
+                            <option value="Rapat Koordinasi Internal" {% if kegiatan and kegiatan.jenis == 'Rapat Koordinasi Internal' %}selected{% endif %}>
+                                Rapat Koordinasi Internal
+                            </option>
+                            <option value="Rapat Bersama Pemerintah Desa" {% if kegiatan and kegiatan.jenis == 'Rapat Bersama Pemerintah Desa' %}selected{% endif %}>
+                                Rapat Bersama Pemerintah Desa
+                            </option>
+                            <option value="Rapat Dengar Pendapat" {% if kegiatan and kegiatan.jenis == 'Rapat Dengar Pendapat' %}selected{% endif %}>
+                                Rapat Dengar Pendapat
+                            </option>
+                            <option value="Monitoring Pembangunan Fisik" {% if kegiatan and kegiatan.jenis == 'Monitoring Pembangunan Fisik' %}selected{% endif %}>
+                                Monitoring Pembangunan Fisik
+                            </option>
+                            <option value="Monitoring Pembagian BLT DD" {% if kegiatan and kegiatan.jenis == 'Monitoring Pembagian BLT DD' %}selected{% endif %}>
+                                Monitoring Pembagian BLT DD
+                            </option>
+                            <option value="Monitoring Kegiatan Posyandu" {% if kegiatan and kegiatan.jenis == 'Monitoring Kegiatan Posyandu' %}selected{% endif %}>
+                                Monitoring Kegiatan Posyandu
+                            </option>
+                            <option value="Monitoring Pembagian Insentif RT/Kader/Guru Ngaji/Merbot Masjid" {% if kegiatan and kegiatan.jenis == 'Monitoring Pembagian Insentif RT/Kader/Guru Ngaji/Merbot Masjid' %}selected{% endif %}>
+                                Monitoring Pembagian Insentif RT/Kader/Guru Ngaji/Merbot Masjid
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="judul" class="form-label">Judul Kegiatan</label>
+                        <input type="text" class="form-control" id="judul" name="judul" 
+                               value="{{ kegiatan.judul if kegiatan else '' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="deskripsi" class="form-label">Deskripsi</label>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3">{{ kegiatan.deskripsi if kegiatan else '' }}</textarea>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="tempat" class="form-label">Tempat</label>
+                        <input type="text" class="form-control" id="tempat" name="tempat" 
+                               value="{{ kegiatan.tempat if kegiatan else '' }}" required>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tanggal" class="form-label">Tanggal</label>
+                                <input type="date" class="form-control" id="tanggal" name="tanggal" 
+                                       value="{{ kegiatan.tanggal if kegiatan else '' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="waktu" class="form-label">Waktu</label>
+                                <input type="time" class="form-control" id="waktu" name="waktu" 
+                                       value="{{ kegiatan.waktu if kegiatan else '' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="dokumentasi" class="form-label">Dokumentasi</label>
+                        <input type="file" class="form-control" id="dokumentasi" name="dokumentasi" accept="image/*">
+                        {% if mode == 'edit' and kegiatan.dokumentasi %}
+                        <small class="text-muted">File saat ini: <a href="{{ url_for('static', filename='uploads/' + kegiatan.dokumentasi) }}" target="_blank">Lihat</a></small>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notulen" class="form-label">Notulen (PDF/Doc)</label>
+                        <input type="file" class="form-control" id="notulen" name="notulen" accept=".pdf,.doc,.docx">
+                        {% if mode == 'edit' and kegiatan.notulen %}
+                        <small class="text-muted">File saat ini: <a href="{{ url_for('static', filename='uploads/' + kegiatan.notulen) }}" target="_blank">Lihat</a></small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+                <a href="{{ url_for('kegiatan') }}" class="btn btn-secondary me-2">Batal</a>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

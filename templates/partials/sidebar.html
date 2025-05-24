@@ -1,0 +1,75 @@
+<nav class="sidebar bg-dark text-white">
+    <div class="sidebar-header p-3">
+        <h5 class="mb-0">Menu Navigasi</h5>
+    </div>
+    <ul class="list-unstyled components">
+        <li>
+            <a href="{{ url_for('dashboard') }}" class="text-white d-flex align-items-center px-3 py-2">
+                <i class="bi bi-house-door me-2"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        {% if session.get('user_role') == 'admin' %}
+        <li>
+            <a href="{{ url_for('anggota') }}" class="text-white d-flex align-items-center px-3 py-2">
+                <i class="bi bi-people me-2"></i>
+                <span>Data Anggota</span>
+            </a>
+        </li>
+        {% endif %}
+        <li>
+            <a href="{{ url_for('kegiatan') }}" class="text-white d-flex align-items-center px-3 py-2">
+                <i class="bi bi-calendar-event me-2"></i>
+                <span>Kegiatan BPD</span>
+            </a>
+        </li>
+        <li>
+            <a href="#adminSubmenu" data-bs-toggle="collapse" class="text-white d-flex align-items-center px-3 py-2">
+                <i class="bi bi-folder me-2"></i>
+                <span>Administrasi</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul class="collapse list-unstyled" id="adminSubmenu">
+                <li>
+                    <a href="{{ url_for('surat_masuk') }}" class="text-white d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-envelope-arrow-down me-2"></i>
+                        <span>Surat Masuk</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('surat_keluar') }}" class="text-white d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-envelope-arrow-up me-2"></i>
+                        <span>Surat Keluar</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('keuangan') }}" class="text-white d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-cash-coin me-2"></i>
+                        <span>Keuangan</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('peraturan') }}" class="text-white d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-file-earmark-text me-2"></i>
+                        <span>Peraturan Desa</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('keputusan') }}" class="text-white d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-file-earmark-check me-2"></i>
+                        <span>Keputusan BPD</span>
+                    <a href="{{ url_for('laporan_tahunan') }}" class="text-white d-flex align-items-center px-3 py-2">
+                        <i class="bi bi-file-earmark-check me-2"></i>
+                        <span>Laporan Tahunan</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('struktur_organisasi') }}">
+                <i class="bi bi-diagram-3 me-2"></i>
+                Struktur Organisasi
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Data Anggota BPD{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Data Anggota BPD</h2>
+    <a href="{{ url_for('tambah_anggota') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Tambah Anggota
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Foto</th>
+                        <th>Nama</th>
+                        <th>Jabatan</th>
+                        <th>Kontak</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in anggota %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            {% if a.foto %}
+                            <img src="{{ url_for('static', filename='uploads/' + a.foto) }}" alt="{{ a.nama }}" width="50" class="rounded-circle">
+                            {% else %}
+                            <img src="{{ url_for('static', filename='img/default-profile.png') }}" alt="Default" width="50" class="rounded-circle">
+                            {% endif %}
+                        </td>
+                        <td>{{ a.nama }}</td>
+                        <td>{{ a.jabatan }}</td>
+                        <td>
+                            <div>{{ a.telepon }}</div>
+                            <small class="text-muted">{{ a.email }}</small>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('edit_anggota', id=a.id) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{{ url_for('hapus_anggota', id=a.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
